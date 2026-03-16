@@ -1,73 +1,138 @@
-# React + TypeScript + Vite
+# React 19 Migration Agent — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React 19 + TypeScript + Vite frontend for the [React 19 Migration Agent Backend](https://github.com/babs12316/react_migration_rag_backend). Users upload `.tsx` files and receive AI-migrated, React 19 compliant output.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Overview
 
-## React Compiler
+This frontend communicates with the backend API to:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Accept `.tsx` files via drag and drop or file picker
+- Trigger the async migration pipeline
+- Display real-time progress via polling
+- Show per-file results — migrated, skipped, issues found
+- Download individual migrated files from S3
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Layer | Technology |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Build tool | Vite |
+| Styling | Tailwind CSS |
+| State management | Zustand |
+| HTTP client | Axios |
+| Linting | ESLint |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+```
+frontend/
+├── public/
+├── src/
+│   ├── api/
+│   │   └── client.ts        # All API calls
+│   ├── components/
+│   │   ├── UploadZone.tsx   # Drag and drop file picker
+│   │   ├── MigrateButton.tsx # Triggers upload + migration
+│   │   ├── ProgressBar.tsx  # Polls status every 2 seconds
+│   │   ├── ResultsList.tsx  # Per-file results + download
+│   │   └── DownloadButton.tsx
+│   ├── store/
+│   │   └── migrationStore.ts # Zustand global state
+│   └── App.tsx
+├── .env
+├── vite.config.ts
+├── tsconfig.json
+└── package.json
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Getting Started
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+
+- Node.js 22.12+
+- The [backend service](https://github.com/babs12316/react_migration_rag_backend) running locally
+
+### Install dependencies
+```bash
+npm install
 ```
+
+### Configure environment
+```env
+VITE_API_URL=http://localhost:8000
+```
+
+### Run the development server
+```bash
+npm run dev
+```
+
+Available at `http://localhost:5173`.
+
+### Build for production
+```bash
+npm run build
+```
+
+---
+
+## Deploy to LocalStack S3
+```bash
+npm run build
+awslocal s3 sync dist/ s3://migration-frontend --delete
+```
+
+Open `http://localhost:4566/migration-frontend/index.html`.
+
+---
+
+## User Flow
+```
+1. Drop .tsx files onto upload zone
+2. Click "Migrate to React 19"
+        │
+        ▼
+   POST /upload → files stored in S3
+   POST /migrate/{job_id} → pipeline starts
+        │
+        ▼
+3. Progress bar polls /status every 2 seconds
+        │
+        ▼
+4. Results list appears when complete
+   - ✓ migrated files with download link
+   - – skipped files (already compliant)
+        │
+        ▼
+5. Click Download → fetches migrated file from S3
+```
+
+---
+
+## Linting
+```bash
+npm run lint
+```
+
+---
+
+## Deployment
+```bash
+cd terraform
+terraform init
+terraform apply -var-file="terraform.prod.tfvars"
+```
+
+---
+
+## Related
+
+- **Backend**: [react_migration_rag_backend](https://github.com/babs12316/react_migration_rag_backend)
