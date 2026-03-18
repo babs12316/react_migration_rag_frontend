@@ -26,7 +26,7 @@ dist-ssr
 *.sw?
 terraform/terraform.tfstate
 terraform.tfstate.backup
-.terraform/
-.terraform.lock.hcl
-terraform.tfvars
-*.prod.tfvars
+terraform/.terraform
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
+terraform/*.prod.tfvars
