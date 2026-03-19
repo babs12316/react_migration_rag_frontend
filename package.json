@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tf:init": "cd terraform && terraform init",
+    "tf:apply": "cd terraform && terraform apply -auto-approve",
+    "deploy": "npm run tf:init && npm run tf:apply && npm run build && awslocal s3 sync dist/ s3://migration-frontend --delete",
+    "open": "open http://localhost:4566/migration-frontend/index.html"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",

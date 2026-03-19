@@ -18,7 +18,7 @@ provider "aws" {
    s3_use_path_style = var.is_local
 
   endpoints {
-    s3 = var.is_local ?"http://localhost:4566" : null
-    cloudfront  = var.is_local ? "http://localhost:4566" : null
+    s3 = var.is_local ?var.localstack_endpoint : null
+    cloudfront  = var.is_local ? var.localstack_endpoint: null
   }
 }
