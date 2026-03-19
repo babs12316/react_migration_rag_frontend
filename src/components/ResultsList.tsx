@@ -42,13 +42,13 @@ export const ResultsList = () => {
 
                         {/* Right — download button */}
                         {result.migrated && job_id && (<a
-                            
-                                href={downloadFile(job_id, result.file)}
-                                download
-                                className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                            >
-                                Download
-                            </a>
+
+                            href={downloadFile(job_id, result.file)}
+                            download
+                            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                            Download
+                        </a>
                         )}
                     </li>
                 ))}
@@ -56,10 +56,15 @@ export const ResultsList = () => {
 
             {/* Errors */}
             {errors.length > 0 && (
-                <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-100">
-                    <p className="text-sm text-red-600 font-medium mb-1">Errors</p>
+                <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-200">
+                    <p className="text-sm text-red-700 font-medium mb-2">
+                        ⚠ {errors.length} file{errors.length > 1 ? "s" : ""} failed
+                    </p>
                     {errors.map((error, i) => (
-                        <p key={i} className="text-xs text-red-500">{error}</p>
+                        <div key={i} className="mt-1">
+                            <p className="text-xs text-red-600 font-medium">{error.file}</p>
+                            <p className="text-xs text-red-500 mt-0.5">{error.error}</p>
+                        </div>
                     ))}
                 </div>
             )}

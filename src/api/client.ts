@@ -1,4 +1,5 @@
 import axios from "axios"
+import type { JobError } from "../store/migrationStore"
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
@@ -36,7 +37,7 @@ export const getStatus = async (job_id: string): Promise<{
 // ── 4. Get results ──
 export const getResults = async (job_id: string): Promise<{
     results: { file: string; issues_found: string[]; migrated: boolean }[]
-    errors:  string[]
+    errors:  JobError[]
 }> => {
     const response = await api.get(`/results/${job_id}`)
     return response.data

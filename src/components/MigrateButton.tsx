@@ -23,7 +23,7 @@ export const MigrateButton = ({ files }: Props) => {
 
         } catch (err) {
             setStatus("failed")
-            addError(err instanceof Error ? err.message : "Something went wrong")
+            addError({error:err instanceof Error ? err.message : "Something went wrong"})
         }
     }
 
