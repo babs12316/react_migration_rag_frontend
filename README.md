@@ -133,6 +133,7 @@ Open `http://localhost:4566/migration-frontend/index.html`.
 | `npm run dev` | Start development server with hot reload |
 | `npm run build` | Build for production |
 | `npm run deploy` | Build + deploy to LocalStack S3 |
+| `npm run open` | Open deployed frontend in browser |
 | `npm run lint` | Run ESLint |
 
 ---
